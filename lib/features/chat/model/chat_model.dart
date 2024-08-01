@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:chatline_demo/common/widget/gifts.dart';
+
 class ChatModel {
   String time;
   bool isSent;
@@ -18,7 +21,13 @@ class ChatModel {
 
 abstract class ChatContent {}
 
-abstract class StickerChatContent extends ChatContent {}
+class StickerChatContent extends ChatContent {
+  Gift gift;
+
+  StickerChatContent({
+    required this.gift,
+  });
+}
 
 abstract class BasicChatContent extends ChatContent {}
 

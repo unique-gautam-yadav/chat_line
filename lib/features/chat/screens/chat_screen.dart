@@ -4,17 +4,17 @@ import 'dart:ui';
 import 'package:chatline_demo/common/data/data.dart';
 import 'package:chatline_demo/common/models/person_model.dart';
 import 'package:chatline_demo/common/style/app_colors.dart';
+import 'package:chatline_demo/common/widget/gifts.dart';
 import 'package:chatline_demo/features/chat/model/chat_model.dart';
+import 'package:chatline_demo/features/profile/screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:string_validator/string_validator.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.person});
@@ -40,14 +40,12 @@ class _ChatScreenState extends State<ChatScreen> {
             child: ListView.separated(
               padding: EdgeInsets.only(
                 top: MediaQuery.paddingOf(context).top + 80,
-                bottom: MediaQuery.paddingOf(context).bottom,
+                bottom: MediaQuery.paddingOf(context).bottom + 100,
                 left: 20,
                 right: 20,
               ),
               itemCount: Data().chats.length,
-              separatorBuilder: (context, index) {
-                return SizedBox(height: 4.h);
-              },
+              separatorBuilder: (context, index) => SizedBox(height: 8.h),
               itemBuilder: (context, index) {
                 var c = Data().chats[index];
                 if (c.content is ImageChatContent) {
@@ -81,9 +79,196 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   );
                 }
+                if (c.content is VideoChatContent) {
+                  var content = c.content as VideoChatContent;
+                  return Align(
+                    alignment:
+                        c.isSent ? Alignment.centerRight : Alignment.centerLeft,
+                    child: FractionallySizedBox(
+                      widthFactor: .8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 16.h),
+                          LayoutBuilder(builder: (context, constraints) {
+                            return SizedBox(
+                              width: constraints.maxWidth,
+                              height: constraints.maxWidth,
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(13),
+                                    child: Image.asset(
+                                      content.image,
+                                      width: double.infinity,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 4, sigmaY: 4),
+                                        child: ClipPath(
+                                          clipper: PlayButtonClipper(),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            height: 45.w,
+                                            width: 45.w,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.white.withOpacity(.6),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              c.time,
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: const Color(0xFF7A7A7A),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                if (c.content is StickerChatContent) {
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          (c.content as StickerChatContent).gift.widget((_) {}),
+                        ],
+                      ),
+                      SizedBox(height: 12.h),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icon/tick.png',
+                            width: 17,
+                            height: 17,
+                          ),
+                          Text(
+                            'You have received a rabbit',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.black,
+                            ),
+                          ),
+                          if (c.isSent)
+                            Text(
+                              c.status == 3 ? "visto " : 'sent ',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: Colors.black,
+                                fontFamily: 'SF',
+                              ),
+                            ),
+                          Text(
+                            c.time,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: const Color(0xFF7A7A7A),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                }
 
                 if (c.content is AudioChatContent) {
-                  return const SizedBox();
+                  c.content = c.content as AudioChatContent;
+                  return Align(
+                    alignment:
+                        c.isSent ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: c.isSent
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisAlignment: c.isSent
+                              ? MainAxisAlignment.start
+                              : MainAxisAlignment.end,
+                          children: [
+                            CupertinoButton(
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
+                                Icons.play_circle_outline_outlined,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {},
+                            ),
+                            Image.asset(
+                              'assets/icon/wave2.png',
+                              height: 34.w,
+                              width: 34.w,
+                            ),
+                            Image.asset(
+                              'assets/icon/wave2.png',
+                              height: 34.w,
+                              width: 34.w,
+                            ),
+                            Image.asset(
+                              'assets/icon/wave2.png',
+                              height: 34.w,
+                              width: 34.w,
+                            ),
+                            Image.asset(
+                              'assets/icon/wave2.png',
+                              height: 34.w,
+                              width: 34.w,
+                            ),
+                            SizedBox(width: 10.w),
+                            Text(
+                              (c.content as AudioChatContent).duration,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (c.isSent)
+                              Text(
+                                c.status == 3 ? "visto " : 'sent ',
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: Colors.black,
+                                  fontFamily: 'SF',
+                                ),
+                              ),
+                            Text(
+                              c.time,
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: const Color(0xFF7A7A7A),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 var content = c.content as TextChatContent;
@@ -109,10 +294,21 @@ class _ChatScreenState extends State<ChatScreen> {
                               ? CrossAxisAlignment.end
                               : CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              content.message,
-                              style: TextStyle(
-                                fontSize: 18.sp,
+                            GestureDetector(
+                              onTap: () {
+                                if (isURL(content.message.trim())) {
+                                  //
+                                }
+                              },
+                              child: SelectableText(
+                                content.message,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  color: isURL(content.message.trim())
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                             Row(
@@ -124,6 +320,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     style: TextStyle(
                                       fontSize: 13.sp,
                                       color: Colors.black,
+                                      fontFamily: 'SF',
                                     ),
                                   ),
                                 Text(
@@ -151,84 +348,109 @@ class _ChatScreenState extends State<ChatScreen> {
             child: _buildAppBar(),
           ),
           Positioned(
-            bottom: MediaQuery.paddingOf(context).bottom + 12,
-            left: 12.w,
-            right: 12.w,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      children: [
-                        CupertinoButton(
-                          padding: const EdgeInsets.all(8),
+            // bottom: MediaQuery.paddingOf(context).bottom * 1.1 + 10,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 21, sigmaY: 21),
+                child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.paddingOf(context).bottom + 12.w,
+                    top: 12.w,
+                    left: 12.w,
+                    right: 12.w,
+                  ),
+                  decoration: BoxDecoration(
+                    // color: const Color(0xFFEFEFEF).withOpacity(.82),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFEFEFEF).withOpacity(.82),
+                        blurRadius: 50,
+                        spreadRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            children: [
+                              CupertinoButton(
+                                padding: const EdgeInsets.all(8),
+                                child: Image.asset(
+                                  'assets/icon/plus_circle.png',
+                                  height: 40,
+                                  width: 40,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isAddOpen = true;
+                                  });
+                                },
+                              ),
+                              Expanded(
+                                child: CupertinoTextField(
+                                  onTapOutside: (event) {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                  },
+                                  decoration: const BoxDecoration(),
+                                  textInputAction: TextInputAction.send,
+                                  placeholder: "Message",
+                                ),
+                              ),
+                              CupertinoButton(
+                                child: Image.asset(
+                                  'assets/icon/star.png',
+                                  height: 20.w,
+                                  width: 20.w,
+                                ),
+                                onPressed: () {
+                                  showCupertinoModalPopup(
+                                    context: context,
+                                    barrierColor: Colors.transparent,
+                                    builder: (context) {
+                                      return const _GiftPopUp();
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
                           child: Image.asset(
-                            'assets/icon/plus_circle.png',
-                            height: 40,
-                            width: 40,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isAddOpen = true;
-                            });
-                          },
-                        ),
-                        Expanded(
-                          child: CupertinoTextField(
-                            onTapOutside: (event) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            decoration: const BoxDecoration(),
-                            textInputAction: TextInputAction.send,
-                            placeholder: "Message",
+                            'assets/icon/wave.png',
+                            height: 28.w,
+                            width: 28.w,
                           ),
                         ),
-                        CupertinoButton(
-                          child: Image.asset(
-                            'assets/icon/star.png',
-                            height: 20.w,
-                            width: 20.w,
-                          ),
-                          onPressed: () {
-                            showCupertinoModalPopup(
-                              context: context,
-                              barrierColor: Colors.transparent,
-                              builder: (context) {
-                                return const _GiftPopUp();
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                        onPressed: () {
+                          setState(() {
+                            isMicOpen = true;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 12.w),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Image.asset(
-                      'assets/icon/wave.png',
-                      height: 28.w,
-                      width: 28.w,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      isMicOpen = true;
-                    });
-                  },
-                ),
-              ],
+              ),
             ),
           ),
           AnimatedPositioned(
@@ -368,60 +590,70 @@ class _ChatScreenState extends State<ChatScreen> {
                   Navigator.pop(context);
                 },
               ),
-              Container(
-                padding: EdgeInsets.all(4.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      widget.person.image,
-                      width: 40.w,
-                      height: 40.w,
+              CupertinoButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (_) => ProfileScreen(person: widget.person),
                     ),
-                    SizedBox(width: 12.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              widget.person.name,
-                              style: TextStyle(
-                                fontSize: 17.sp,
-                                height: 1,
-                                color: AppColors.black,
-                              ),
-                            ),
-                            if (widget.person.isVerified)
-                              Image.asset(
-                                'assets/icon/verified.png',
-                                width: 14.w,
-                                height: 14.w,
-                              ),
-                          ],
-                        ),
-                        if (widget.person.isActive)
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(4.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        widget.person.image,
+                        width: 40.w,
+                        height: 40.w,
+                      ),
+                      SizedBox(width: 12.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Row(
                             children: [
-                              const Text("En Linea"),
-                              const SizedBox(width: 8),
-                              Container(
-                                height: 9.w,
-                                width: 9.w,
-                                decoration: BoxDecoration(
-                                  color: AppColors.lime,
-                                  shape: BoxShape.circle,
+                              Text(
+                                widget.person.name,
+                                style: TextStyle(
+                                  fontSize: 17.sp,
+                                  height: 1,
+                                  color: AppColors.black,
                                 ),
                               ),
+                              if (widget.person.isVerified)
+                                Image.asset(
+                                  'assets/icon/verified.png',
+                                  width: 14.w,
+                                  height: 14.w,
+                                ),
                             ],
-                          )
-                      ],
-                    ),
-                    SizedBox(width: 12.w),
-                  ],
+                          ),
+                          if (widget.person.isActive)
+                            Row(
+                              children: [
+                                const Text("En Linea"),
+                                const SizedBox(width: 8),
+                                Container(
+                                  height: 9.w,
+                                  width: 9.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lime,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ],
+                            )
+                        ],
+                      ),
+                      SizedBox(width: 12.w),
+                    ],
+                  ),
                 ),
               ),
               const Spacer(),
@@ -588,361 +820,98 @@ class _GiftPopUpState extends State<_GiftPopUp> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 16.h),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    _giftConfirm();
-                  },
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      Positioned(
-                        top: 20,
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          children: [
-                            const Spacer(),
-                            Image.asset(
-                              'assets/icon/star.png',
-                              height: 15.w,
-                              width: 15.w,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              "most popular",
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                color: const Color(0xFF3C3C3C),
-                              ),
-                            ),
-                            const Spacer(flex: 4),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 45.w / 2),
-                        padding: EdgeInsets.only(
-                          top: 45.w / 2 + 4.h,
-                          bottom: 12.h,
-                          left: 32.w,
-                          right: 32.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE7E7E7),
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          "1",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
+                Stack(
+                  children: [
+                    Positioned(
+                      top: 20,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        children: [
+                          const Spacer(),
+                          Image.asset(
+                            'assets/icon/star.png',
+                            height: 15.w,
+                            width: 15.w,
                           ),
-                        ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            "most popular",
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: const Color(0xFF3C3C3C),
+                            ),
+                          ),
+                          const Spacer(flex: 4),
+                        ],
                       ),
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          height: 45.w,
-                          width: 45.w,
-                          'assets/gift/coin_1.png',
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    Coin1().widget((_) {
+                      _giftConfirm();
+                    }),
+                  ],
                 ),
                 SizedBox(height: 20.h),
                 Row(
                   children: [
                     const Spacer(),
-                    _midGift(
-                      image: 'assets/gift/coin_5.png',
-                      price: '5',
-                    ),
+                    Coin5().widget((_) {
+                      _giftConfirm();
+                    }),
                     const Spacer(flex: 2),
-                    _midGift(
-                      image: 'assets/gift/coin_30.png',
-                      price: '30',
-                    ),
+                    Coin30().widget((_) {
+                      _giftConfirm();
+                    }),
                     const Spacer(),
                   ],
                 ),
                 SizedBox(height: 48.h),
                 Row(
                   children: [
-                    _largeGift(
-                      image: 'assets/gift/coin_120.png',
-                      name: 'Marquise',
-                      price: '120',
-                    ),
+                    Coin120().widget((_) {
+                      _giftConfirm();
+                    }),
                     SizedBox(width: 20.w),
-                    _largeGift(
-                      image: 'assets/gift/coin_200.png',
-                      name: 'Duquesse',
-                      price: '200',
-                    ),
+                    Coin200().widget((_) {
+                      _giftConfirm();
+                    }),
                   ],
                 ),
                 SizedBox(height: 62.h),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    _giftConfirm();
-                  },
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/gift/coin_1000.png',
-                        height: 142.w,
+                Coin1000().widget((_) {
+                  _giftConfirm();
+                }),
+                SizedBox(height: 44.h),
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/svg/rabbit.svg',
+                      height: 10.h,
+                      colorFilter: const ColorFilter.srgbToLinearGamma(),
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "If you want to send a monarch you need to be Duquesse category",
+                      style: TextStyle(
+                        fontSize: 8.sp,
                       ),
-                      SizedBox(height: 20.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 12.w),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Color(0xFFF9F9F9),
-                                  Color(0xFFD8D8D8),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(100),
-                              border:
-                                  Border.all(color: const Color(0xFFCCFFD3)),
-                            ),
-                            child: Image.asset(
-                              'assets/icon/crown.png',
-                              color: Colors.black,
-                              height: 16.w,
-                              width: 16.w,
-                            ),
-                          ),
-                          SizedBox(width: 8.w),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 12.w),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Color(0xFFF9F9F9),
-                                  Color(0xFFD8D8D8),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(100),
-                              border:
-                                  Border.all(color: const Color(0xFFCCFFD3)),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/svg/rabbit.svg',
-                                  height: 16.w,
-                                ),
-                                SizedBox(width: 8.w),
-                                const Icon(Icons.close),
-                                SizedBox(width: 8.w),
-                                Image.asset(
-                                  'assets/icon/aston_martin.png',
-                                  height: 16.w,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Monarch",
-                                  style: TextStyle(
-                                    fontSize: 22.sp,
-                                    color: const Color(0xFF5B5B5B),
-                                  ),
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "1000",
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: const Color(0xFF626262),
-                                  ),
-                                ),
-                                SizedBox(width: 8.w),
-                                const Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  color: Color(0xFF626262),
-                                ),
-                                SizedBox(width: 8.w),
-                              ],
-                            ),
-                          ),
-                        ],
+                    ),
+                    const Spacer(),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.black,
                       ),
-                      SizedBox(height: 44.h),
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/svg/rabbit.svg',
-                            height: 10.h,
-                            colorFilter: const ColorFilter.srgbToLinearGamma(),
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            "If you want to send a monarch you need to be Duquesse category",
-                            style: TextStyle(
-                              fontSize: 8.sp,
-                            ),
-                          ),
-                          const Spacer(),
-                          CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _largeGift({
-    required String image,
-    required String price,
-    required String name,
-  }) {
-    return Expanded(
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: () {
-          _giftConfirm();
-        },
-        child: Stack(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 95.w / 2 + 10.h),
-              padding: EdgeInsets.only(
-                top: 4.h,
-                bottom: 4.h,
-                left: 8.w,
-                right: 20.w,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE7E7E7),
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/icon/crown.png',
-                    height: 16.w,
-                    width: 16.w,
-                  ),
-                  SizedBox(width: 75.w),
-                  Expanded(
-                    child: FittedBox(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            name,
-                            style: TextStyle(
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            price,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                left: 25.w,
-              ),
-              child: Image.asset(
-                image,
-                width: 75.w,
-                height: 100.w,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _midGift({
-    required String image,
-    required String price,
-  }) {
-    return SizedBox(
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: () {
-          _giftConfirm();
-        },
-        child: Stack(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 45.w / 3),
-              padding: EdgeInsets.only(
-                top: 12.h,
-                bottom: 12.h,
-                left: 20.w,
-                right: 20.w,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE7E7E7),
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(width: 45.w),
-                  Text(
-                    price,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10.w),
-              child: Image.asset(
-                image,
-                height: 45.w,
-                width: 45.w,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -1034,5 +1003,33 @@ class _GiftConfirm extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class PlayButtonClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final Path path = Path();
+    final double radius = size.width / 2;
+
+    path.addOval(
+        Rect.fromCircle(center: Offset(radius, radius), radius: radius));
+
+    final Path innerPath = Path();
+
+    path.moveTo(16, 12);
+    path.lineTo(size.width - 12, (size.height - 0) / 2);
+    path.lineTo(16, size.height - 12);
+    path.close();
+
+    path.addPath(innerPath, Offset.zero);
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
   }
 }

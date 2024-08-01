@@ -51,4 +51,6 @@ class AppColors {
 
   /// 0xFFEAEAEA
   static Color fabColor = const Color(0xFFEAEAEA);
+  /// 0xFFECECEC
+  static Color bgColor = const Color(0xFFECECEC);
 }

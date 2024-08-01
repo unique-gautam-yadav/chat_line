@@ -16,9 +16,12 @@ class ChatLineApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return const MaterialApp(
+        return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: RootScreen(),
+          theme: ThemeData(
+            fontFamily: 'SF',
+          ),
+          home: const RootScreen(),
         );
       },
     );

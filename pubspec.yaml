@@ -16,6 +16,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.10+1
   iconsax: ^0.0.8
+  string_validator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -30,5 +31,16 @@ flutter:
     - assets/svg/
     - assets/gift/
     - assets/icon/
+    - assets/font/
     - assets/media/
     - assets/person/
+
+  fonts:
+    - family: SF
+      fonts:
+        - asset: assets/font/SFPRODISPLAYBOLD.OTF
+          weight: 700
+        - asset: assets/font/SFPRODISPLAYMEDIUM.OTF
+          weight: 500
+        - asset: assets/font/SFPRODISPLAYREGULAR.OTF
+          weight: 400

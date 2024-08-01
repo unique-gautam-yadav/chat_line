@@ -1,5 +1,7 @@
 import 'package:chatline_demo/common/models/person_model.dart';
+import 'package:chatline_demo/common/widget/gifts.dart';
 import 'package:chatline_demo/features/chat/model/chat_model.dart';
+import 'package:flutter/material.dart';
 
 class Data {
   static List<PersonModel> inboxPersons = [
@@ -277,6 +279,52 @@ class Data {
       time: '15:51 pm',
       isSent: false,
       content: AudioChatContent(duration: '00:03'),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: true,
+      content: TextChatContent(message: '🔥🌶️🤫🤩'),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: true,
+      content: TextChatContent(
+          message:
+              'https://www.tiktok.com/@lorenaserpa_/video/6980856007568133382'),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: false,
+      content: TextChatContent(
+          message:
+              'listo amor pero me esperas me pongo linda para ti por que recien llegue de la calle 👹'),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: false,
+      content: VideoChatContent(image: 'assets/media/media2.png'),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: true,
+      content: TextChatContent(message: 'linda me encanta'),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: true,
+      content: StickerChatContent(gift: Coin200()),
+      status: 3,
+    ),
+    ChatModel(
+      time: '15:51 pm',
+      isSent: true,
+      content: StickerChatContent(gift: Coin1000()),
       status: 3,
     ),
   ];
