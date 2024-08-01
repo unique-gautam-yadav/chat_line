@@ -204,26 +204,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Stack(
                 children: [
                   Image.asset(selected.image),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                        child: ClipPath(
-                          clipper: PlayButtonClipper(),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            height: 45.w,
-                            width: 45.w,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(.9),
+                  if (selected.isVideo)
+                    Align(
+                      alignment: Alignment.center,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: ClipPath(
+                            clipper: PlayButtonClipper(),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              height: 45.w,
+                              width: 45.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(.9),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
