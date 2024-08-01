@@ -1,7 +1,6 @@
 import 'package:chatline_demo/common/models/person_model.dart';
 import 'package:chatline_demo/common/widget/gifts.dart';
 import 'package:chatline_demo/features/chat/model/chat_model.dart';
-import 'package:flutter/material.dart';
 
 class Data {
   static List<PersonModel> inboxPersons = [
