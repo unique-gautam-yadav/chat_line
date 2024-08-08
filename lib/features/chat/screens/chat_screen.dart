@@ -567,14 +567,14 @@ class _ChatScreenState extends State<ChatScreen> {
     return ClipRRect(
       borderRadius: BorderRadius.vertical(bottom: Radius.circular(26.w)),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 21, sigmaY: 21),
+        filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
         child: Container(
           padding: EdgeInsets.only(
             top: MediaQuery.paddingOf(context).top + 5.h,
-            bottom: 12.h,
+            bottom: 14.h,
           ),
           decoration: BoxDecoration(
-            color: const Color(0xFFE4E4E4).withOpacity(.82),
+            color: const Color(0xFFE4E4E4).withOpacity(.64),
             // borderRadius: BorderRadius.vertical(bottom: Radius.circular(26.w)),
           ),
           child: Row(

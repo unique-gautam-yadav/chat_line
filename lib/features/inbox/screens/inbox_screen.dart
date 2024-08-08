@@ -17,122 +17,68 @@ class InboxScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      floatingActionButton: CupertinoButton(
-        onPressed: () {},
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(100),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFEDEDED).withOpacity(.89),
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(12.w),
-                child: Image.asset(
-                  'assets/icon/plus.png',
-                  width: 32.w,
-                  height: 32.w,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 60),
+        child: CupertinoButton(
+          onPressed: () {},
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEDEDED).withOpacity(.89),
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.w),
+                  child: Image.asset(
+                    'assets/icon/plus.png',
+                    width: 32.w,
+                    height: 32.w,
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Container(
-            padding: EdgeInsets.only(
-              left: 26.w,
-              bottom: 26.h,
-              top: MediaQuery.paddingOf(context).top + 10.w,
-              right: 20.w,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.grey,
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(26.w),
-              ),
-            ),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  'assets/svg/logo.svg',
-                  height: 26.w,
-                ),
-                const Spacer(),
-                CupertinoButton(
-                  padding: EdgeInsets.all(8.w),
-                  child: Image.asset(
-                    'assets/icon/search.png',
-                    height: 25.w,
-                    width: 25.w,
-                  ),
-                  onPressed: () {},
-                ),
-                SizedBox(width: 8.w),
-                CupertinoButton(
-                  padding: EdgeInsets.all(8.w),
-                  child: badges.Badge(
-                    badgeContent: Container(
-                      // height: 12.h,
-                      // width: 12.h,
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: AppColors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        "1",
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ),
-                    child: Image.asset(
-                      'assets/icon/bell.png',
-                      height: 25.w,
-                      width: 25.w,
-                    ),
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
           SizedBox(height: 12.h),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Chats",
-                        style: TextStyle(
-                          fontSize: 43.sp,
-                          color: AppColors.blackGray,
-                          fontWeight: FontWeight.w300,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 140.h),
+                    Row(
+                      children: [
+                        Text(
+                          "Chats",
+                          style: TextStyle(
+                            fontSize: 43.sp,
+                            color: AppColors.blackGray,
+                            fontWeight: FontWeight.w300,
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                      CupertinoButton(
-                        padding: const EdgeInsets.all(8),
-                        child: Image.asset(
-                          'assets/icon/status.png',
-                          height: 32.w,
-                          width: 32.w,
+                        const Spacer(),
+                        CupertinoButton(
+                          padding: const EdgeInsets.all(8),
+                          child: Image.asset(
+                            'assets/icon/status.png',
+                            height: 32.w,
+                            width: 32.w,
+                          ),
+                          onPressed: () {},
                         ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.h),
-                  Expanded(
-                    child: ListView.separated(
+                      ],
+                    ),
+                    SizedBox(height: 24.h),
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 28.h),
@@ -143,8 +89,76 @@ class InboxScreen extends StatelessWidget {
                         return ChatCard(model: model);
                       },
                     ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(26.w),
+            ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 21, sigmaY: 21),
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 26.w,
+                  bottom: 26.h,
+                  top: MediaQuery.paddingOf(context).top + 10.w,
+                  right: 20.w,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F0F0).withOpacity(.82),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(26.w),
                   ),
-                ],
+                ),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/svg/logo.svg',
+                      height: 26.w,
+                    ),
+                    const Spacer(),
+                    CupertinoButton(
+                      padding: EdgeInsets.all(8.w),
+                      child: Image.asset(
+                        'assets/icon/search.png',
+                        height: 25.w,
+                        width: 25.w,
+                      ),
+                      onPressed: () {},
+                    ),
+                    SizedBox(width: 8.w),
+                    CupertinoButton(
+                      padding: EdgeInsets.all(8.w),
+                      child: badges.Badge(
+                        badgeContent: Container(
+                          // height: 12.h,
+                          // width: 12.h,
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: AppColors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            "1",
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ),
+                        child: Image.asset(
+                          'assets/icon/bell.png',
+                          height: 25.w,
+                          width: 25.w,
+                        ),
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:ui';
+
 import 'package:badges/badges.dart' as badges;
 import 'package:chatline_demo/common/style/app_colors.dart';
 import 'package:chatline_demo/features/inbox/screens/inbox_screen.dart';
@@ -20,22 +22,31 @@ class _RootScreenState extends State<RootScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: CustomNavBar(
-        onItemTap: (_) {
-          setState(() {
-            _selected = _;
-          });
-        },
-        currentIndex: _selected,
-        items: [
-          MyNavItem(iconData: Icons.login),
-          MyNavItem(iconData: CupertinoIcons.phone, badgeCount: 2),
-          MyNavItem(imageName: "logo"),
-          MyNavItem(iconData: CupertinoIcons.chat_bubble, badgeCount: 1),
-          MyNavItem(imageName: 'assets/icon/fav.png'),
+      body: Stack(
+        children: [
+          const InboxScreen(),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: CustomNavBar(
+              onItemTap: (_) {
+                setState(() {
+                  _selected = _;
+                });
+              },
+              currentIndex: _selected,
+              items: [
+                MyNavItem(iconData: Icons.login),
+                MyNavItem(iconData: CupertinoIcons.phone, badgeCount: 2),
+                MyNavItem(imageName: "logo"),
+                MyNavItem(iconData: CupertinoIcons.chat_bubble, badgeCount: 1),
+                MyNavItem(imageName: 'assets/icon/fav.png'),
+              ],
+            ),
+          )
         ],
       ),
-      body: const InboxScreen(),
     );
   }
 }
@@ -52,102 +63,109 @@ class CustomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
-      child: ColoredBox(
-        color: Colors.white,
-        child: SafeArea(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 23, sigmaY: 23),
+        child: ColoredBox(
+          color: Colors.white.withOpacity(.83),
           child: LayoutBuilder(builder: (_, constraints) {
             double lineSize = constraints.maxWidth / items.length;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: items.map(
-                    (e) {
-                      int index = items.indexOf(e);
-                      bool selected = currentIndex == index;
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom + 10.h,
+                top: 10.h,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: items.map(
+                      (e) {
+                        int index = items.indexOf(e);
+                        bool selected = currentIndex == index;
 
-                      return SizedBox(
-                        width: e.imageName == 'logo'
-                            ? lineSize + 20
-                            : lineSize - 5,
-                        child: CupertinoButton(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          onPressed: selected
-                              ? null
-                              : () {
-                                  onItemTap(index);
-                                },
-                          child: e.imageName == 'logo'
-                              ? Center(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const SoundBar(),
-                                      SizedBox(height: 4.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/logo.svg',
-                                            height: 10.h,
-                                          ),
-                                          Transform.translate(
-                                            offset: const Offset(0, .5),
-                                            child: Text(
-                                              "Line",
-                                              style: TextStyle(
-                                                fontSize: 12.sp,
-                                                color: AppColors.lime,
-                                                height: 1,
+                        return SizedBox(
+                          width: e.imageName == 'logo'
+                              ? lineSize + 20
+                              : lineSize - 5,
+                          child: CupertinoButton(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            onPressed: selected
+                                ? null
+                                : () {
+                                    onItemTap(index);
+                                  },
+                            child: e.imageName == 'logo'
+                                ? Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        const SoundBar(),
+                                        SizedBox(height: 4.h),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/svg/logo.svg',
+                                              height: 10.h,
+                                            ),
+                                            Transform.translate(
+                                              offset: const Offset(0, .5),
+                                              child: Text(
+                                                "Line",
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.lime,
+                                                  height: 1,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )
-                              : badges.Badge(
-                                  showBadge: e.badgeCount > 0,
-                                  badgeContent: Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: Text(
-                                      "${e.badgeCount}",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11.sp,
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : badges.Badge(
+                                    showBadge: e.badgeCount > 0,
+                                    badgeContent: Padding(
+                                      padding: const EdgeInsets.all(2),
+                                      child: Text(
+                                        "${e.badgeCount}",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11.sp,
+                                        ),
                                       ),
                                     ),
+                                    badgeStyle: badges.BadgeStyle(
+                                      badgeColor: AppColors.red,
+                                    ),
+                                    child: e.imageName == null
+                                        ? Icon(
+                                            e.iconData!,
+                                            color: selected
+                                                ? AppColors.blue
+                                                : Colors.grey,
+                                            size: 30,
+                                          )
+                                        : Image.asset(
+                                            e.imageName!,
+                                            height: 30.w,
+                                            width: 30.w,
+                                            color: selected
+                                                ? AppColors.blue
+                                                : Colors.grey,
+                                          ),
                                   ),
-                                  badgeStyle: badges.BadgeStyle(
-                                    badgeColor: AppColors.red,
-                                  ),
-                                  child: e.imageName == null
-                                      ? Icon(
-                                          e.iconData!,
-                                          color: selected
-                                              ? AppColors.blue
-                                              : Colors.grey,
-                                          size: 30,
-                                        )
-                                      : Image.asset(
-                                          e.imageName!,
-                                          height: 30.w,
-                                          width: 30.w,
-                                          color: selected
-                                              ? AppColors.blue
-                                              : Colors.grey,
-                                        ),
-                                ),
-                        ),
-                      );
-                    },
-                  ).toList(),
-                ),
-              ],
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
+                ],
+              ),
             );
           }),
         ),

@@ -183,10 +183,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const Text(
                             """Colombia 🇨🇴 
-        En linea los Viernes , Sabados , y 
-        Domingos 😘
-        Modelo 😉
-        Conductora 👀🤖
+En linea los Viernes , Sabados , y 
+Domingos 😘
+Modelo 😉
+Conductora 👀🤖
         """,
                           )
                         ],
